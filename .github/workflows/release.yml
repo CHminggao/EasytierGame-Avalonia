@@ -1,0 +1,147 @@
+name: Release
+
+# 创建标签（v*）后自动编译并生成 GitHub Release。
+# 也支持在 Actions 页面手动触发（workflow_dispatch），便于验证流程。
+on:
+  push:
+    tags:
+      # 支持 v1.5.5 与 1.5.5 两种标签写法
+      - 'v*'
+      - '[0-9]*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（不含 v 前缀；留空则取 csproj 中的 Version）'
+        required: false
+        type: string
+      prerelease:
+        description: '标记为预发布（Pre-release）'
+        required: false
+        type: boolean
+        default: false
+
+# 创建 Release 需要写 contents 权限
+permissions:
+  contents: write
+
+# 同一标签不重复并发；手动触发时按 ref 分组
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+
+jobs:
+  build:
+    name: 编译 / 测试 / 打包
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: 解析版本号
+        id: version
+        shell: pwsh
+        run: |
+          $version = ''
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version = '${{ inputs.version }}'.Trim()
+          }
+          elseif ('${{ github.ref_type }}' -eq 'tag') {
+            # v1.5.5 -> 1.5.5
+            $version = '${{ github.ref_name }}'.TrimStart('v', 'V')
+          }
+
+          # 拿不到版本号时回退到 csproj，避免标签名变成单独的 "v"
+          if ([string]::IsNullOrWhiteSpace($version)) {
+            [xml]$csproj = Get-Content 'src/EasytierGame.Avalonia/EasytierGame.Avalonia.csproj'
+            $version = ($csproj.Project.PropertyGroup |
+              Where-Object { $_.Version } |
+              Select-Object -First 1).Version
+          }
+
+          if ([string]::IsNullOrWhiteSpace($version)) {
+            throw '无法确定版本号（既未从标签取到，也未从 csproj 读到）'
+          }
+
+          "value=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "版本号: $version"
+
+      - name: 还原依赖
+        run: dotnet restore EasytierGame.sln
+
+      - name: 编译（Release）
+        run: dotnet build EasytierGame.sln -c Release --no-restore
+
+      - name: 运行单元测试
+        run: >
+          dotnet test tests/EasytierGame.Core.Tests/EasytierGame.Core.Tests.csproj
+          -c Release --no-build --logger "console;verbosity=normal"
+
+      - name: 发布并打包绿色 zip
+        shell: pwsh
+        run: |
+          ./publish-avalonia.ps1 -Version '${{ steps.version.outputs.value }}'
+
+      - name: 上传构建产物（便于排查，即使发布步骤失败也能拿到 zip）
+        uses: actions/upload-artifact@v4
+        with:
+          name: easytier-game-avalonia
+          path: release/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+
+  release:
+    name: 创建 GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 下载构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: easytier-game-avalonia
+          path: dist
+
+      - name: 列出产物
+        run: ls -lh dist
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # 标签推送时直接用该标签；手动触发时用输入的版本号新建标签
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', needs.build.outputs.version) }}
+          name: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', needs.build.outputs.version) }}
+          files: dist/*.zip
+          draft: false
+          prerelease: ${{ inputs.prerelease || false }}
+          fail_on_unmatched_files: true
+          body: |
+            ## EasyTier 游戏联机启动器（Avalonia 版）
+
+            - 自包含单文件，解压即用，无需安装 .NET 运行时
+            - 支持 Windows 10 / 11（x64）
+            - 启动时会请求管理员权限（防火墙、网卡跃点、内核替换需要提权）
+
+            解压后目录结构：
+
+            ```
+            easytier-game.exe
+            帮助.txt
+            easytier/
+            ```
+
+            本 Release 由 GitHub Actions 自动构建（见 `.github/workflows/release.yml`）。

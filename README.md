@@ -78,6 +78,8 @@ easytier/guiLogs/avalonia.log
 
 ## 发布
 
+### 本地打包
+
 ```powershell
 pwsh ./publish-avalonia.ps1
 ```
@@ -88,6 +90,28 @@ pwsh ./publish-avalonia.ps1
 - 单文件 exe 约 **43.6 MB**，整包 zip 约 **53 MB**
 - 打包前会强校验 `easytier-core.exe` / `easytier-cli.exe` / `wintun.dll` /
   `config_template.json` 是否齐全，缺失即构建失败（避免静默产出跑不起来的包）
+
+### 打标签自动发布（GitHub Actions）
+
+`.github/workflows/release.yml`：**推送标签后自动编译、跑测试、创建 GitHub Release**。
+
+```bash
+git tag v1.5.6
+git push origin v1.5.6
+```
+
+流程：
+
+1. Windows runner 上 `dotnet restore / build / test`（**测试不通过则不发布**）
+2. 调 `publish-avalonia.ps1` 打包绿色 zip，版本号取自标签（`v1.5.6` → `1.5.6`）
+3. 先上传 zip 为构建产物（即使发布失败也能拿到），再创建 Release 并附加 zip
+
+细节：
+
+- 触发标签：`v*` 或纯数字开头（`1.5.6` 均可）
+- 也支持在 Actions 页面 **手动触发**（可指定版本号与是否预发布）
+- 同一标签不会并发重复运行
+- 创建 Release 需要 `contents: write` 权限（已在 workflow 内声明）
 
 ## 运行时文件布局
 
