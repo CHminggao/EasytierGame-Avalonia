@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.Ipv6Dialog"
+        Title="IPV6地址填写"
+        Width="440"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+  <StackPanel Margin="14" Spacing="10">
+
+    <TextBlock Text="选填 V6 地址，可与 IPv4 一起使用以进行双栈操作"
+               Classes="fieldLabel"
+               TextWrapping="Wrap" />
+
+    <TextBox x:Name="Ipv6Box"
+             Text="{Binding Config.Ipv6, Mode=TwoWay}"
+             Watermark="请输入IPV6地址" />
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="确定" Classes="primary" MinWidth="80" Click="OnConfirm" />
+      <Button Content="清空" MinWidth="80" Click="OnClear" />
+      <Button Content="取消" MinWidth="80" Click="OnCancel" />
+    </StackPanel>
+  </StackPanel>
+</Window>

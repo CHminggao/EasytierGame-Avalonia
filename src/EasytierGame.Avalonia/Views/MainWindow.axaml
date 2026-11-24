@@ -1,0 +1,142 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EasytierGame.Desktop.ViewModels"
+        xmlns:ctl="using:EasytierGame.Desktop.Controls"
+        x:Class="EasytierGame.Desktop.Views.MainWindow"
+        Title="easytier-game"
+        Width="420"
+        Height="400"
+        MinWidth="400"
+        MinHeight="370"
+        MaxWidth="560"
+        MaxHeight="540"
+        WindowStartupLocation="CenterScreen">
+  <Grid Margin="6,4" RowDefinitions="Auto,Auto,Auto,*,Auto">
+
+    <!-- ===== 服务器状态行 + 地址栏 ===== -->
+    <Grid Grid.Row="0" Margin="0,0,0,6" RowDefinitions="Auto,Auto">
+
+      <Grid Grid.Row="0" Margin="0,0,0,6" ColumnDefinitions="Auto,*">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Height="30" VerticalAlignment="Center" Spacing="6">
+          <Border x:Name="ConnectionTag" Classes="tag" Height="24">
+            <TextBlock x:Name="ConnectionTagText" Text="{Binding ConnectionText}" />
+          </Border>
+          <Border Classes="tag" Height="22" ToolTip.Tip="内核版本（不是软件的版本）">
+            <TextBlock FontSize="11" Text="{Binding CoreVersionTag}" />
+          </Border>
+        </StackPanel>
+
+        <Button Grid.Column="1"
+                Content="内核管理"
+                Classes="plainPrimary"
+                Height="26"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="OnCoreManage"
+                ToolTip.Tip="请先停止联机后再使用，否则内核被占用的情况下，无法进行内核更换" />
+      </Grid>
+
+      <ctl:ServerUrlBox Grid.Row="1"
+                        x:Name="ServerUrlBox"
+                        Candidates="{Binding BasePeers}"
+                        CurrentUrl="{Binding SelectedServerUrl, Mode=TwoWay}"
+                        CommitRequested="OnServerUrlCommit"
+                        DeleteRequested="OnServerUrlDelete"
+                        CopyRequested="OnServerUrlCopy" />
+    </Grid>
+
+    <!-- ===== 房间名 / 房间密码 ===== -->
+    <Grid Grid.Row="1" Margin="0,0,0,12" ColumnDefinitions="*,10,*">
+      <StackPanel Grid.Column="0" Spacing="5">
+        <TextBlock Text="房间名" Classes="fieldLabel" />
+        <TextBox Text="{Binding Config.NetworkName, Mode=TwoWay}" ToolTip.Tip="对应命令行参数 --network-name" />
+      </StackPanel>
+      <StackPanel Grid.Column="2" Spacing="5">
+        <TextBlock Text="房间密码" Classes="fieldLabel" />
+        <TextBox Text="{Binding Config.NetworkPassword, Mode=TwoWay}" ToolTip.Tip="对应命令行参数 --network-secret" />
+      </StackPanel>
+    </Grid>
+
+    <!-- ===== 成员名 / 局域网IP ===== -->
+    <Grid Grid.Row="2" Margin="0,0,0,8" ColumnDefinitions="*,10,*" RowDefinitions="Auto,Auto">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="成员名" Classes="fieldLabel" Height="24" Margin="0,0,0,5" />
+      <TextBox Grid.Row="1" Grid.Column="0"
+               x:Name="HostnameBox"
+               MaxLength="100"
+               Text="{Binding Config.Hostname, Mode=TwoWay}"
+               ToolTip.Tip="必填，例如: Player1" />
+
+      <DockPanel Grid.Row="0" Grid.Column="2" Height="24" Margin="0,0,0,5">
+        <TextBlock DockPanel.Dock="Left" Text="局域网IP" Classes="fieldLabel" Margin="0,0,6,0" />
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+          <Button Content="⧉" Classes="text" FontSize="12" ToolTip.Tip="复制V4" Click="OnCopyIp" />
+          <Button Content="V6" Classes="text" FontSize="12" ToolTip.Tip="选填V6地址，可与IPv4一起使用以进行双栈操作" Click="OnEditIpv6" />
+          <CheckBox Content="动态V4"
+                    IsChecked="{Binding Config.Dhcp, Mode=TwoWay}"
+                    ToolTip.Tip="勾选=动态获取IP（-d）；不勾选=固定IP" />
+        </StackPanel>
+      </DockPanel>
+
+      <TextBox Grid.Row="1" Grid.Column="2"
+               x:Name="Ipv4Box"
+               MaxLength="100"
+               IsReadOnly="{Binding Config.Dhcp, Mode=OneWay}"
+               Text="{Binding Ipv4Text, Mode=TwoWay}"
+               ToolTip.Tip="例如: 10.126.126.1" />
+    </Grid>
+
+    <!-- ===== Toast 区 ===== -->
+    <ItemsControl Grid.Row="3" ItemsSource="{Binding Toasts}" VerticalAlignment="Bottom" Margin="0,0,0,6">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Margin="0,1" Padding="6,3" CornerRadius="3" Background="{DynamicResource PrimaryLightBrush}">
+            <TextBlock Text="{Binding Text}" FontSize="13" TextWrapping="Wrap" />
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <!-- ===== 底部操作区 ===== -->
+    <Grid Grid.Row="4" RowDefinitions="Auto,Auto">
+
+      <Grid Grid.Row="0" Margin="0,0,0,8" ColumnDefinitions="Auto,*">
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+          <Button x:Name="StartButton"
+                  MinWidth="92"
+                  Classes="primary"
+                  Classes.danger="{Binding IsStart}"
+                  Content="{Binding StartButtonText}"
+                  IsEnabled="{Binding CanStart}"
+                  Click="OnStartStop" />
+          <Button x:Name="StartMenuButton"
+                  Classes="primary"
+                  Classes.danger="{Binding IsStart}"
+                  Content="▾"
+                  Padding="10,5"
+                  MinHeight="32"
+                  Click="OnOpenStartMenu" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="10">
+          <CheckBox Content="强制中转" IsChecked="{Binding Config.DisbleP2p, Mode=TwoWay}"
+                    ToolTip.Tip="对应命令行参数 --disable-p2p" />
+          <CheckBox Content="开机自启" IsChecked="{Binding Config.AutoStart, Mode=OneWay}"
+                    Click="OnToggleAutoStart" ToolTip.Tip="自启后隐藏于托盘，不显示界面" />
+        </StackPanel>
+      </Grid>
+
+      <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+          <Button Content="≡" Classes="plainInfo" ToolTip.Tip="日志" Click="OnShowLog" />
+          <Button Content="房间信息" Classes="plainSuccess" Click="OnShowMembers" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
+          <Button Content="分享/导入" Click="OnOpenShareMenu" />
+          <Button Content="高级选项" Click="OnShowAdvance" />
+          <Button Content="增强工具" Classes="plainPrimary" Click="OnShowTool" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,26 @@
+[如果界面无法打开]
+
+1. 如果您已经启动easytier-game.exe，那它可能会在后台运行，打开任务管理器关闭easytier-game.exe
+
+2. 使用easytier-game安装目录下的 easytier/tool/MicrosoftEdgeWebview2Setup.exe 安装webview2
+
+3. 再次启用easytier-game.exe
+
+
+[如果想彻底删除easytierGame]
+--
+1. 关闭easytierGame
+
+2. 运行easytier-game安装目录下的 easytier/clear_local_data.bat (需要管理员权限) 输入y确认，清除本地存储数据
+
+3. 删除easytierGame文件夹
+--
+或者直接使用uninstall.exe
+
+
+[没有服务器，怎么自建服务]
+1. 点击 启动联机 按钮旁边的箭头 选择自建服务 设置好端口号后 点击启动服务器
+
+2. 搜索一下 openFrp mossFrp sakurafrp 等 将你的本地服务通过它（们）代理到公网
+
+3. 将代理之后的地址发给别人，他们就可以通过这个加入你的服务了

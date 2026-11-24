@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.ConfigFileDialog"
+        Title="配置文件启动"
+        Width="460"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+  <StackPanel Margin="14" Spacing="10">
+
+    <Grid ColumnDefinitions="*,Auto">
+      <CheckBox Grid.Column="0"
+                Content="启用配置文件启动"
+                IsChecked="{Binding Enabled, Mode=TwoWay}"
+                ToolTip.Tip="启用后将完全使用选中的配置文件作为联机配置，其余界面配置不会生效" />
+      <Button Grid.Column="1" Content="打开目录" Classes="text" Command="{Binding OpenDirectoryCommand}" />
+    </Grid>
+
+    <ComboBox HorizontalAlignment="Stretch"
+              ItemsSource="{Binding Files}"
+              SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+              PlaceholderText="选择配置文件">
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="确定" Classes="primary" MinWidth="80" Click="OnConfirm" />
+      <Button Content="取消" MinWidth="80" Click="OnCancel" />
+    </StackPanel>
+  </StackPanel>
+</Window>

@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EasytierGame.Desktop.Controls.ServerUrlBox">
+  <StackPanel Spacing="4">
+
+    <!-- 候选下拉：每一项自带「复制 / 删除」 -->
+    <ComboBox x:Name="CandidateCombo"
+              HorizontalAlignment="Stretch"
+              MinHeight="32"
+              PlaceholderText="选择已保存的节点；每一项右侧可直接复制或删除"
+              SelectionChanged="OnSelectionChanged">
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <Grid ColumnDefinitions="*,Auto,Auto" MinWidth="240">
+            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" Margin="0,0,10,0" TextTrimming="CharacterEllipsis" />
+            <Button Grid.Column="1" Content="⧉" Classes="text" FontSize="12" Padding="6,0"
+                    ToolTip.Tip="复制此地址" Tag="{Binding}" Click="OnItemCopyClick" />
+            <Button Grid.Column="2" Content="✕" Classes="text" FontSize="12" Padding="6,0"
+                    Foreground="{DynamicResource DangerBrush}"
+                    ToolTip.Tip="删除此地址" Tag="{Binding}" Click="OnItemDeleteClick" />
+          </Grid>
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
+
+    <!-- 地址输入 + 添加 -->
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBox Grid.Column="0" x:Name="UrlInput" KeyDown="OnKeyDown"
+               Watermark="必须带协议头，例如 tcp://1.2.3.4:11010" />
+      <Button Grid.Column="1" Content="添加" Classes="plainPrimary" Margin="5,0,0,0"
+              Click="OnAddClick" ToolTip.Tip="校验通过后加入节点列表" />
+    </Grid>
+
+    <!-- 校验错误提示 -->
+    <Border x:Name="ErrorRow" IsVisible="False">
+      <TextBlock x:Name="ErrorText" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" />
+    </Border>
+  </StackPanel>
+</UserControl>

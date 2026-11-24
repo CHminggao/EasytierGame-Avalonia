@@ -1,0 +1,172 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="using:EasytierGame.Desktop.Converters"
+        xmlns:vm="using:EasytierGame.Desktop.ViewModels"
+        x:Class="EasytierGame.Desktop.Views.AdvanceWindow"
+        Title="高级选项"
+        Width="620"
+        Height="520"
+        WindowStartupLocation="CenterOwner">
+  <ScrollViewer Padding="24,10">
+    <StackPanel Spacing="6">
+
+      <!-- P2P / 启动行为 -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <CheckBox Content="直连(P2P)优先使用传输协议"
+                  IsChecked="{Binding Config.EnableCustomProtocol, Mode=TwoWay}"
+                  ToolTip.Tip="若无法建立指定的协议，会自动使用可建立连接的协议" />
+        <ComboBox Width="100" SelectedItem="{Binding Config.CustomProtocol, Mode=TwoWay}"
+                  ItemsSource="{x:Static vm:MainViewModel.ProtocolOptions}" />
+      </StackPanel>
+
+      <CheckBox Content="帮助他人建立直连(P2P)连接" IsChecked="{Binding Config.RelayAllPeerrpc, Mode=TwoWay}" />
+      <CheckBox Content="软件启动后，自动&quot;启动联机&quot;(搭配开机自启，无感联机)"
+                IsChecked="{Binding Config.ConnectAfterStart, Mode=TwoWay}" />
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="自动生成界面配置文件easytier/config.json"
+                  IsChecked="{Binding State.CreateConfigInEasytier, Mode=TwoWay}" />
+        <Button Content="打开目录" Classes="text" Click="OnOpenConfigDir" />
+      </StackPanel>
+
+      <CheckBox Content="防止系统休眠(比如:屏幕会一直亮着)"
+                IsChecked="{Binding Config.EnablePreventSleep, Mode=TwoWay}"
+                Click="OnPreventSleepChanged" />
+
+      <CheckBox Content="Windows UDP 广播中继" IsChecked="{Binding Config.EnableUdpBroadcastRelay, Mode=TwoWay}" />
+
+      <CheckBox Content="使用低延迟模式" IsChecked="{Binding Config.Latencyfirst, Mode=TwoWay}"
+                ToolTip.Tip="弱网环境下可能会导致网络延迟忽高忽低" />
+
+      <CheckBox Content="KCP 代理" IsChecked="{Binding Config.EnableKcpProxy, Mode=TwoWay}"
+                ToolTip.Tip="将TCP流量转为KCP流量，降低传输延迟，提升传输速度" />
+
+      <CheckBox Content="禁用KCP输入" IsChecked="{Binding Config.DisableKcpInput, Mode=TwoWay}" />
+
+      <CheckBox Content="QUIC 代理" IsChecked="{Binding Config.EnableQuicProxy, Mode=TwoWay}" />
+
+      <CheckBox Content="禁用QUIC输入" IsChecked="{Binding Config.DisableQuicInput, Mode=TwoWay}" />
+
+      <CheckBox Content="禁用UDP打洞功能" IsChecked="{Binding Config.DisableUdpHolePunching, Mode=TwoWay}" />
+
+      <CheckBox Content="禁用对称NAT打洞" IsChecked="{Binding Config.DisableSymHolePunching, Mode=TwoWay}"
+                ToolTip.Tip="禁用基于生日攻击的对称NAT (NAT4) UDP 打洞。该打洞方式可能被运营商封锁，NAT4 打不通时可试" />
+
+      <CheckBox Content="不使用IPv6" IsChecked="{Binding Config.DisableIpv6, Mode=TwoWay}" />
+
+      <CheckBox Content="魔法DNS" IsChecked="{Binding Config.AcceptDNS, Mode=TwoWay}"
+                ToolTip.Tip="您可以使用域名访问其他节点，例如：hostname.et.net。魔法DNS将修改您的系统DNS设置，请谨慎启用" />
+
+      <CheckBox Content="启用私有模式" IsChecked="{Binding Config.PrivateMode, Mode=TwoWay}" />
+
+      <Separator />
+
+      <!-- 白名单 -->
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="TCP端口白名单" IsChecked="{Binding Config.TcpWhitelistEnable, Mode=TwoWay}" />
+        <TextBox Width="240" Text="{Binding Config.TcpWhitelist, Mode=TwoWay}"
+                 ToolTip.Tip="格式: 80 或范围 8000-9000" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="UDP端口白名单" IsChecked="{Binding Config.UdpWhitelistEnable, Mode=TwoWay}" />
+        <TextBox Width="240" Text="{Binding Config.UdpWhitelist, Mode=TwoWay}"
+                 ToolTip.Tip="格式: 53 或范围 5000-6000" />
+      </StackPanel>
+
+      <Separator />
+
+      <!-- 监听 -->
+      <CheckBox Content="不监听任何端口，只连接到对等节点"
+                IsChecked="{Binding Config.DisbleListenner, Mode=TwoWay}"
+                ToolTip.Tip="无法联机时，可以尝试开启这个选项" />
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="监听端口" Classes="fieldLabel" />
+        <TextBox Width="90" Text="{Binding Config.Port, Mode=TwoWay}"
+                 IsEnabled="{Binding Config.EnableCustomListener, Converter={x:Static conv:InverseBoolConverter.Instance}}" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="自定义监听地址" IsChecked="{Binding Config.EnableCustomListener, Mode=TwoWay}" />
+        <Button Content="编辑" Classes="text" Click="OnEditListener" />
+      </StackPanel>
+
+      <Separator />
+
+      <!-- 端口转发 -->
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="端口转发" IsChecked="{Binding Config.EnablePortForward, Mode=TwoWay}" />
+        <Button Content="编辑规则" Classes="text" Click="OnEditPortForward" />
+      </StackPanel>
+
+      <Separator />
+
+      <!-- 网卡 -->
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="自定义虚拟网卡名称" IsChecked="{Binding Config.DevName, Mode=TwoWay}" />
+        <TextBox Width="150" Text="{Binding Config.DevNameValue, Mode=TwoWay}" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox Content="自定义虚拟网卡优先级" IsChecked="{Binding Config.EnableNetCardMetric, Mode=TwoWay}" />
+        <TextBox Width="80" Text="{Binding Config.NetCardMetricValue, Mode=TwoWay}" />
+        <TextBlock Text="（数值越小，优先级越高）" Classes="fieldLabel" />
+      </StackPanel>
+
+      <CheckBox Content="不创建TUN虚拟网卡" IsChecked="{Binding Config.NoTun, Mode=TwoWay}"
+                ToolTip.Tip="开启后该节点无法主动访问其他节点" />
+
+      <CheckBox Content="绑定物理网卡" IsChecked="{Binding Config.BindDeviceEnable, Mode=TwoWay}"
+                ToolTip.Tip="将连接器的套接字绑定到物理设备以避免路由问题" />
+
+      <Separator />
+
+      <!-- 安全 / 性能 -->
+      <CheckBox Content="允许此节点成为出口节点" IsChecked="{Binding Config.EnablExitNode, Mode=TwoWay}" />
+
+      <CheckBox Content="关闭信息加密" IsChecked="{Binding Config.DisableEncryption, Mode=TwoWay}"
+                ToolTip.Tip="关闭后通信数据将在互联网上明文传输，如房间名和密码" />
+
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <CheckBox Content="开启多线程" IsChecked="{Binding Config.MultiThread, Mode=TwoWay}" />
+        <TextBlock Text="线程数" Classes="fieldLabel" />
+        <TextBox Width="80" Text="{Binding Config.MultiThreadCount, Mode=TwoWay}"
+                 IsEnabled="{Binding Config.MultiThread}"
+                 ToolTip.Tip="运行时工作线程数，仅勾选“开启多线程”时生效；默认为 2（内核约定的最小值）" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="传输数据压缩算法" Classes="fieldLabel" />
+        <ComboBox Width="160" SelectedItem="{Binding Config.Compression, Mode=TwoWay}"
+                  ItemsSource="{x:Static vm:MainViewModel.CompressionOptions}" />
+      </StackPanel>
+
+      <Separator />
+
+      <CheckBox Content="为子网代理和 KCP 代理开启用户网络栈"
+                IsChecked="{Binding Config.UseSmoltcp, Mode=TwoWay}"
+                ToolTip.Tip="开启后会降低网络性能，但不需要配置防火墙" />
+
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <CheckBox Content="输出日志到本地" IsChecked="{Binding Config.SaveErrorLog, Mode=TwoWay}" />
+        <ComboBox Width="140" SelectedItem="{Binding Config.LogLevel, Mode=TwoWay}"
+                  ItemsSource="{x:Static vm:MainViewModel.LogLevelOptions}" />
+        <Button Content="打开日志目录" Classes="text" Click="OnOpenLogDir" />
+      </StackPanel>
+
+      <Separator />
+
+      <CheckBox Content="UPnP 端口映射" IsChecked="{Binding Config.EnableUpnp, Mode=TwoWay}"
+                ToolTip.Tip="自动向路由器请求端口映射，默认开启" />
+
+      <CheckBox Content="公网 IPv6 地址前缀提供" IsChecked="{Binding Config.Ipv6PublicAddrProvider, Mode=TwoWay}" />
+
+      <CheckBox Content="公网 IPv6 地址自动获取" IsChecked="{Binding Config.Ipv6PublicAddrAuto, Mode=TwoWay}" />
+
+      <CheckBox Content="禁用 Relay 数据转发" IsChecked="{Binding Config.DisableRelayData, Mode=TwoWay}" />
+
+      <CheckBox Content="通过系统内核转发子网代理数据包（禁用内置NAT）"
+                IsChecked="{Binding State.ProxyForwardBySystem, Mode=TwoWay}" />
+    </StackPanel>
+  </ScrollViewer>
+</Window>

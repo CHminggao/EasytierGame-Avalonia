@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.MembersWindow"
+        Title="成员列表"
+        Width="900"
+        Height="400"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="6">
+    <!-- 横向滚动条：列宽固定，总宽超出窗口时出现 -->
+    <DataGrid ItemsSource="{Binding Members}"
+              IsReadOnly="True"
+              AutoGenerateColumns="False"
+              GridLinesVisibility="All"
+              CanUserResizeColumns="True"
+              HorizontalScrollBarVisibility="Auto"
+              VerticalScrollBarVisibility="Auto">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="成员名" Binding="{Binding Hostname}" Width="130" />
+        <DataGridTextColumn Header="方式" Binding="{Binding Cost}" Width="70" />
+        <DataGridTextColumn Header="虚拟网IP" Binding="{Binding Ipv4}" Width="120" />
+        <DataGridTextColumn Header="延迟/ms" Binding="{Binding Latency}" Width="80" />
+        <DataGridTextColumn Header="丢包率" Binding="{Binding LossRate}" Width="80" />
+        <DataGridTextColumn Header="NAT类型" Binding="{Binding NatType}" Width="160" />
+        <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="130" />
+        <DataGridTextColumn Header="隧道协议" Binding="{Binding TunnelProto}" Width="90" />
+        <DataGridTextColumn Header="代理" Binding="{Binding Proxy}" Width="90" />
+        <DataGridTextColumn Header="接收" Binding="{Binding RxBytes}" Width="80" />
+        <DataGridTextColumn Header="传输" Binding="{Binding TxBytes}" Width="80" />
+        <DataGridTextColumn Header="连接地址" Binding="{Binding Connections}" Width="240" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</Window>

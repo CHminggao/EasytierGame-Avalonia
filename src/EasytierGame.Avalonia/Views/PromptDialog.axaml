@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.PromptDialog"
+        Title="提示"
+        Width="440"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False">
+  <Grid Margin="18" RowDefinitions="Auto,Auto,Auto">
+
+    <TextBlock x:Name="TitleText"
+               Grid.Row="0"
+               FontSize="15"
+               FontWeight="SemiBold"
+               Margin="0,0,0,10" />
+
+    <StackPanel Grid.Row="1" Spacing="8">
+      <TextBlock x:Name="ContentBlock" TextWrapping="Wrap" />
+      <TextBox x:Name="InputBox" MinHeight="32" />
+    </StackPanel>
+
+    <StackPanel Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,16,0,0"
+                Spacing="8">
+      <Button x:Name="ConfirmButton" Classes="primary" MinWidth="80" Click="OnConfirm" />
+      <Button x:Name="CancelButton" MinWidth="80" Click="OnCancel" />
+    </StackPanel>
+  </Grid>
+</Window>
