@@ -1,0 +1,32 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EasytierGame.Desktop.App"
+             RequestedThemeVariant="Light">
+  <Application.Styles>
+    <FluentTheme />
+    <!-- DataGrid 自带主题（必须显式引入，否则表格无样式） -->
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <StyleInclude Source="/Styles/AppStyles.axaml" />
+  </Application.Styles>
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <!-- 语义色（与 WPF 版 Palette.Light 对齐） -->
+      <SolidColorBrush x:Key="PrimaryBrush" Color="#409EFF" />
+      <SolidColorBrush x:Key="SuccessBrush" Color="#67C23A" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#E6A23C" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#F56C6C" />
+      <SolidColorBrush x:Key="InfoBrush" Color="#909399" />
+
+      <SolidColorBrush x:Key="PrimaryLightBrush" Color="#ECF5FF" />
+      <SolidColorBrush x:Key="SuccessLightBrush" Color="#F0F9EB" />
+      <SolidColorBrush x:Key="WarningLightBrush" Color="#FDF6EC" />
+      <SolidColorBrush x:Key="DangerLightBrush" Color="#FEF0F0" />
+      <SolidColorBrush x:Key="InfoLightBrush" Color="#F4F4F5" />
+
+      <SolidColorBrush x:Key="SecondaryForegroundBrush" Color="#606266" />
+      <SolidColorBrush x:Key="PlaceholderForegroundBrush" Color="#A8ABB2" />
+      <SolidColorBrush x:Key="DividerBrush" Color="#DCDFE6" />
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

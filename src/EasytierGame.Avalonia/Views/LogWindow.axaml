@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.LogWindow"
+        Title="联机日志"
+        Width="620"
+        Height="400"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="6" RowDefinitions="*,Auto">
+    <ListBox x:Name="LogList" Grid.Row="0" ItemsSource="{Binding Log}" />
+
+    <Button Grid.Row="1"
+            Content="复制全部"
+            Classes="plainInfo"
+            HorizontalAlignment="Right"
+            Margin="0,6,0,0"
+            Click="OnCopyAll" />
+  </Grid>
+</Window>

@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="using:EasytierGame.Desktop.Converters"
+        x:Class="EasytierGame.Desktop.Views.CidrWindow"
+        Title="子网代理"
+        Width="620"
+        Height="400"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="8" RowDefinitions="Auto,Auto,*">
+
+    <StackPanel Grid.Row="0" Spacing="6">
+      <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <TextBlock Text="子网代理" Classes="fieldLabel" />
+        <RadioButton GroupName="cidr" Content="开启" IsChecked="{Binding State.CidrEnable, Mode=TwoWay}" />
+        <RadioButton GroupName="cidr" Content="关闭"
+                     IsChecked="{Binding State.CidrEnable, Mode=TwoWay, Converter={x:Static conv:InverseBoolConverter.Instance}}" />
+        <CheckBox Content="通过系统内核转发子网代理数据包，禁用内置NAT"
+                  IsChecked="{Binding State.ProxyForwardBySystem, Mode=TwoWay}" />
+      </StackPanel>
+
+      <TextBox AcceptsReturn="True"
+               Height="80"
+               TextWrapping="Wrap"
+               Text="{Binding Config.ProxyNetworks, Mode=TwoWay}"
+               Watermark="例如: 192.168.1.0/24 一行一个" />
+    </StackPanel>
+
+    <TextBlock Grid.Row="1" Text="路由表" Classes="fieldLabel" Margin="0,8,0,4" />
+
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Routes}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="主机名" Binding="{Binding Hostname}" Width="140" />
+        <DataGridTextColumn Header="虚拟网IP" Binding="{Binding Ipv4}" Width="120" />
+        <DataGridTextColumn Header="被代理的子网" Binding="{Binding ProxyCidrs}" Width="*" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</Window>

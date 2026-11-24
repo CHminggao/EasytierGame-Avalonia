@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!--
+      虽然 Avalonia 本身跨平台，但本项目依赖 EasytierGame.Core（net8.0-windows）：
+      内核是 Windows exe、系统集成用 Win32 P/Invoke（任务计划 / 网卡 / 防火墙），
+      因此这里对齐到 net8.0-windows，与 WPF 版本共用同一 Core 程序集。
+    -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <RootNamespace>EasytierGame.Desktop</RootNamespace>
+    <AssemblyName>easytier-game</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.5.5</Version>
+    <AssemblyVersion>1.5.5.0</AssemblyVersion>
+    <FileVersion>1.5.5.0</FileVersion>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
+    <!-- DataGrid 不在核心包里（成员列表 / 网卡表 / 路由表都依赖它） -->
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.3" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasytierGame.Core\EasytierGame.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    运行时资源：内核与工具目录随 exe 一起分发。
+
+    与 WPF 版本同样的两个要点：
+    1) CopyToPublishDirectory="Never"：不让这些文件进入 publish 流水线，
+       避免被 PublishSingleFile 吞进 exe；
+    2) ExcludeFromSingleFile="true"：双保险。
+    publish 目录里的 easytier/ 由 publish-avalonia.ps1 负责拷贝。
+    保留 CopyToOutputDirectory 是为了 dotnet run 调试时 easytier/ 就在输出目录。
+  -->
+  <ItemGroup>
+    <None Include="..\..\assets\easytier\**\*"
+          Link="easytier\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="Never"
+          ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+</Project>

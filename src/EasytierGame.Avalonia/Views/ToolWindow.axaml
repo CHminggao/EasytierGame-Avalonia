@@ -1,0 +1,95 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.ToolWindow"
+        Title="增强工具"
+        Width="480"
+        Height="500"
+        WindowStartupLocation="CenterOwner">
+  <TabControl Margin="6">
+
+    <!-- ===== 网卡 ===== -->
+    <TabItem Header="网卡">
+      <Grid Margin="10" RowDefinitions="Auto,Auto,Auto,*">
+
+        <TextBlock Grid.Row="0"
+                   Text="查询网卡信息，把联机使用的网卡跃点设为最小以提升优先级"
+                   Classes="fieldLabel"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"
+                   ToolTip.Tip="跃点越小，网卡优先级越高，范围 1-9999" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,8">
+          <Button Grid.Column="0" Content="查询网卡信息" Classes="primary" Click="OnRefreshNetCards" />
+
+          <TextBox Grid.Column="2" Width="90" Margin="10,0,0,0"
+                   Text="{Binding MetricInput, Mode=TwoWay}"
+                   ToolTip.Tip="跃点越小，网卡优先级越高，范围(1-9999)" />
+
+          <Button Grid.Column="3" Content="保存" Classes="plainSuccess" Margin="6,0,0,0"
+                  Command="{Binding SaveMetricCommand}" />
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   Text="选中一行后可直接修改该网卡的跃点；修改需要管理员权限。"
+                   Classes="fieldLabel"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,6" />
+
+        <DataGrid Grid.Row="3"
+                  ItemsSource="{Binding NetCards}"
+                  SelectedItem="{Binding SelectedNetCard, Mode=TwoWay}"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="网卡名" Binding="{Binding Name}" Width="*" />
+            <DataGridTextColumn Header="跃点" Binding="{Binding Metric}" Width="90" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+    </TabItem>
+
+    <!-- ===== 防火墙 / Ping ===== -->
+    <TabItem Header="防火墙">
+      <Grid Margin="10" RowDefinitions="Auto,Auto,Auto,*">
+
+        <StackPanel Grid.Row="0">
+          <Button Content="一键关闭防火墙"
+                  Classes="danger"
+                  HorizontalAlignment="Center"
+                  Margin="0,0,0,10"
+                  Command="{Binding DisableFirewallCommand}" />
+
+          <ItemsControl ItemsSource="{Binding FirewallStates}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Display}" FontSize="12" HorizontalAlignment="Center" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <Button Content="读取状态" Classes="text" HorizontalAlignment="Center" Margin="0,6,0,0"
+                  Command="{Binding RefreshFirewallCommand}" />
+        </StackPanel>
+
+        <Separator Grid.Row="1" Margin="0,10" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="0,0,0,6">
+          <TextBlock Text="Ping测试" Classes="fieldLabel" />
+          <TextBox Width="160" Text="{Binding PingIp, Mode=TwoWay}" Watermark="请输入IP地址" />
+          <TextBox Width="52" Text="{Binding PingCount, Mode=TwoWay}" ToolTip.Tip="次数 1-10" />
+          <Button Content="Ping一下" Command="{Binding TestPingCommand}" CommandParameter="v4" />
+        </StackPanel>
+
+        <Border Grid.Row="3" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" CornerRadius="3">
+          <ListBox ItemsSource="{Binding PingLog}" FontFamily="Consolas" FontSize="11">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </Grid>
+    </TabItem>
+  </TabControl>
+</Window>

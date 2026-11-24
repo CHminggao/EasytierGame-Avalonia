@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.TextEditorDialog"
+        Title="编辑"
+        Width="520"
+        Height="400"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+  <Grid Margin="12" RowDefinitions="Auto,*,Auto">
+
+    <TextBlock x:Name="HintText"
+               Grid.Row="0"
+               TextWrapping="Wrap"
+               FontSize="13"
+               Foreground="{DynamicResource SecondaryForegroundBrush}"
+               Margin="0,0,0,6" />
+
+    <TextBox x:Name="Editor"
+             Grid.Row="1"
+             AcceptsReturn="True"
+             TextWrapping="NoWrap"
+             FontFamily="Consolas"
+             VerticalContentAlignment="Top" />
+
+    <StackPanel Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,10,0,0"
+                Spacing="8">
+      <Button Content="保存" Classes="primary" MinWidth="80" Click="OnConfirm" />
+      <Button Content="取消" MinWidth="80" Click="OnCancel" />
+    </StackPanel>
+  </Grid>
+</Window>

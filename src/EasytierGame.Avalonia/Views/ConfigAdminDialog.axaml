@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.ConfigAdminDialog"
+        Title="房间配置管理"
+        Width="460"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+  <StackPanel Margin="14" Spacing="10">
+
+    <StackPanel Orientation="Horizontal" Spacing="6">
+      <Button Content="打开目录" Classes="text" Command="{Binding OpenDirectoryCommand}" />
+      <Button Content="刷新" Classes="text" Command="{Binding ReloadCommand}" />
+      <Button Content="删除选中" Classes="text" Command="{Binding DeleteCommand}" />
+    </StackPanel>
+
+    <ComboBox HorizontalAlignment="Stretch"
+              ItemsSource="{Binding Files}"
+              SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+              PlaceholderText="选择配置文件" />
+
+    <Border Padding="8" CornerRadius="3" Background="{DynamicResource WarningLightBrush}">
+      <TextBlock Text="打开目录删除文件即可删除配置"
+                 FontSize="12"
+                 TextWrapping="Wrap"
+                 Foreground="{DynamicResource WarningBrush}" />
+    </Border>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="切换" Classes="primary" MinWidth="80" Command="{Binding ExchangeCommand}" />
+      <Button Content="关闭" MinWidth="80" Click="OnClose" />
+    </StackPanel>
+  </StackPanel>
+</Window>

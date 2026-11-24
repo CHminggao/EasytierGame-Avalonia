@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="EasytierGame.Desktop.Views.MessageDialog"
+        Title="提示"
+        Width="440"
+        SizeToContent="Height"
+        MinHeight="150"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False">
+  <Grid Margin="18" RowDefinitions="Auto,*,Auto">
+
+    <TextBlock x:Name="TitleText"
+               Grid.Row="0"
+               FontSize="15"
+               FontWeight="SemiBold"
+               Margin="0,0,0,10" />
+
+    <ScrollViewer Grid.Row="1" MaxHeight="340">
+      <TextBlock x:Name="ContentBlock"
+                 TextWrapping="Wrap"
+                 LineHeight="22" />
+    </ScrollViewer>
+
+    <StackPanel Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,16,0,0"
+                Spacing="8">
+      <Button x:Name="ConfirmButton"
+              Classes="primary"
+              MinWidth="80"
+              Click="OnConfirm" />
+      <Button x:Name="CancelButton"
+              MinWidth="80"
+              Click="OnCancel" />
+    </StackPanel>
+  </Grid>
+</Window>
